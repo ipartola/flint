@@ -44,6 +44,11 @@ start() {
 	chown $FASTCGI_USER $RUN_DIR
 
 	echo -n " * Starting FastCGI for $project_name... "
+	if [ -f $pid ]; then
+		echo "Already running. Not doing anything."
+		return
+	fi
+
 	echo "source \"$virtualenv/bin/activate\" && python \"$project/manage.py\" runfcgi socket=$socket pidfile=$pid minspare=$MINSPARE maxspare=$MAXSPARE method=threaded daemonize=true && echo \"OK\" || echo \"Failed\" && deactivate" | sudo -u $FASTCGI_USER bash -s
 }
 
