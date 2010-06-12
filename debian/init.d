@@ -74,6 +74,7 @@ case "$1" in
 		errcode=0
 		stop_server || errcode=$?
 		log_end_msg $errcode
+		;;
   restart|force-reload)
         log_daemon_msg "Restarting $DESC" "$NAME"
 		$DAEMON restart_all
