@@ -2,5 +2,5 @@ all:
 clean:
 
 install:
-	install -m 755 usr/sbin/flint $(DESTDIR)/usr/sbin/
+	install -m 755 flint $(DESTDIR)/usr/sbin/
 
