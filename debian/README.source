@@ -1,0 +1,15 @@
+In order to run flint you will need at least the following:
+
+1. Install python, django, flup and virtualenv.
+
+2. Create a path for django projects and virtualenv's. The default is 
+   /var/django and /var/django/.virtualenvs respectively.
+
+3. Install your code in /var/django/MYPROJECT
+
+4. Then simply run flint
+
+$ sudo flint start MYPROJECT
+
+That will start a FastCGI daemon with a UNIX domain socket located at 
+/var/run/django/MYPROJECT-fastcgi.sock

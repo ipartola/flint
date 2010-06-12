@@ -1,0 +1,14 @@
+Source: flint
+Section: web
+Priority: extra
+Maintainer: Igor Partola <ipartola@gmail.com>
+Build-Depends: debhelper (>= 7)
+Standards-Version: 3.8.0
+Homepage: http://igorpartola.com/flint/
+
+Package: flint
+Architecture: all
+Depends: ${misc:Depends}
+Description: Automatic manager for Django/flup FastCGI processes
+ Flint works with virtualenv, Django and flup to start/stop 
+ FastCGI processes that web servers can connect to.

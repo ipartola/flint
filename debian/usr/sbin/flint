@@ -1,0 +1,123 @@
+#!/bin/sh
+
+DJANGO_ROOT='/var/django'
+VIRTUALENV_ROOT="$DJANGO_ROOT/.virtualenvs"
+MINSPARE=4
+MAXSPARE=32
+RUN_DIR="/var/run/django"
+FASTCGI_USER="www-data"
+
+[ -e /etc/flint.conf ] && . /etc/flint.conf;
+
+VERSION_STR="flint 1.0.0"
+
+is_root_or_die() {
+	if [ $(id -u) != "0" ]; then
+		echo "You must be root to run this command."
+		exit 1
+	fi
+}
+
+is_project_or_die() {
+	project_name=$1
+	project="$DJANGO_ROOT/$project_name"
+	if [ ! -d $project ]; then
+		echo "Error: $project_name is not a valid Django project."
+		exit 1
+	fi
+}
+
+start() {
+	is_root_or_die
+	project_name=$1
+	is_project_or_die $project_name
+
+	virtualenv="$VIRTUALENV_ROOT/$project_name"
+	project="$DJANGO_ROOT/$project_name"
+	socket="$RUN_DIR/$project_name-fastcgi.sock"
+	pid="$RUN_DIR/$project_name.pid"
+
+	if [ ! -d $RUN_DIR ]; then
+		mkdir $RUN_DIR
+	fi
+		
+	chown $FASTCGI_USER $RUN_DIR
+
+	echo -n " * Starting FastCGI for $project_name... "
+	echo "source \"$virtualenv/bin/activate\" && python \"$project/manage.py\" runfcgi socket=$socket pidfile=$pid minspare=$MINSPARE maxspare=$MAXSPARE method=threaded daemonize=true && echo \"OK\" || echo \"Failed\" && deactivate" | sudo -u $FASTCGI_USER bash -s
+}
+
+stop() {
+	is_root_or_die
+	project_name=$1
+	is_project_or_die $project_name
+
+	socket="$RUN_DIR/$project_name-fastcgi.sock"
+	pid="$RUN_DIR/$project_name.pid"
+
+	echo -n " * Stopping FastCGI for $project_name... "
+
+	if [ ! -f $pid ]; then
+		echo "Already stopped"
+		return
+	fi
+
+	kill `cat $pid`		
+	rm $pid
+	rm $socket
+
+	echo "OK"
+}
+
+start_all() {
+	is_root_or_die
+	for project in `ls $DJANGO_ROOT`; do
+		start $project
+	done
+}
+
+stop_all() {
+	is_root_or_die
+	for project in `ls $DJANGO_ROOT`; do
+		stop $project
+	done
+}
+
+case "$1" in
+	start_all)
+		start_all
+	;;
+	stop_all)
+		stop_all
+	;;
+	restart_all)
+		stop_all
+		start_all
+	;;
+
+	start)
+		start $2
+	;;
+	stop)
+		stop $2
+	;;
+	restart)
+		stop $2
+		start $2
+	;;
+
+	-V)
+		echo $VERSION_STR
+	;;
+	--version)
+		echo $VERSION_STR
+	;;
+	*)
+		echo "Usage: flint {start|stop|restart} projectname"
+		echo "       flint {start_all|stop_all|restart_all}"
+		echo "       flint {--version|-V}"
+		exit 1
+	;;
+esac
+exit 0
+
