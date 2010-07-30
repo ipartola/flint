@@ -49,7 +49,7 @@ start() {
 		return
 	fi
 
-	echo "source \"$virtualenv/bin/activate\" && python \"$project/manage.py\" runfcgi socket=$socket pidfile=$pid minspare=$MINSPARE maxspare=$MAXSPARE method=threaded daemonize=true && echo \"OK\" || echo \"Failed\" && deactivate" | sudo -u $FASTCGI_USER bash -s
+	echo "source \"$virtualenv/bin/activate\" && python \"$project/manage.py\" runfcgi socket=$socket pidfile=$pid minspare=$MINSPARE maxspare=$MAXSPARE method=prefork daemonize=true && echo \"OK\" || echo \"Failed\" && deactivate" | sudo -u $FASTCGI_USER bash -s
 }
 
 stop() {

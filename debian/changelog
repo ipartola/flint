@@ -1,3 +1,9 @@
+flint (1.0.1-1) stable; urgency=low
+
+  * Switched to prefork by default
+
+ -- Igor Partola <ipartola@gmail.com>  Fri, 30 Jul 2010 17:25:00 -0400
+
 flint (1.0.0-1) stable; urgency=low
 
   * Initial release
