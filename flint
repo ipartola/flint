@@ -9,7 +9,7 @@ FASTCGI_USER="www-data"
 
 [ -e /etc/flint.conf ] && . /etc/flint.conf;
 
-VERSION_STR="flint 1.0.0"
+VERSION_STR="flint 1.1.0"
 
 is_root_or_die() {
 	if [ $(id -u) != "0" ]; then
@@ -19,6 +19,10 @@ is_root_or_die() {
 }
 
 is_project_or_die() {
+	if [ "$project_name" = "" ]; then
+		echo "Specify a project name."
+		exit 1
+	fi
 	project_name=$1
 	project="$DJANGO_ROOT/$project_name"
 	if [ ! -d $project ]; then
@@ -49,7 +53,7 @@ start() {
 		return
 	fi
 
-	echo "source \"$virtualenv/bin/activate\" && python \"$project/manage.py\" runfcgi socket=$socket pidfile=$pid minspare=$MINSPARE maxspare=$MAXSPARE method=prefork daemonize=true && echo \"OK\" || echo \"Failed\" && deactivate" | sudo -u $FASTCGI_USER bash -s
+	echo "source \"$virtualenv/bin/activate\" && python \"$project/manage.py\" runfcgi socket=$socket pidfile=$pid minspare=$MINSPARE maxspare=$MAXSPARE method=prefork daemonize=true && echo \"OK\" || echo \"Failed\" && deactivate" | su $FASTCGI_USER -c 'bash -s'
 }
 
 stop() {
@@ -72,6 +76,34 @@ stop() {
 	rm $socket
 
 	echo "OK"
+}
+
+restart_dead_project() {
+	is_root_or_die
+	project_name=$1
+	is_project_or_die $project_name
+
+	pid_file="$RUN_DIR/$project_name.pid"
+	if [ ! -f $pid_file ]; then
+		echo "No PID file for $project_name. Restarting."
+		start $project_name
+		return
+	fi
+
+	pid=`cat $pid_file`
+	is_running=`ps -p $pid | grep -c $pid`
+	if [ $is_running -eq 0 ]; then
+		echo "PID file present but no matching process for $project_name. Restarting."
+		rm $pid_file
+		start $project_name
+	fi
+}
+
+restart_dead() {
+	is_root_or_die
+	for project in `ls $DJANGO_ROOT`; do
+		restart_dead_project $project
+	done
 }
 
 start_all() {
@@ -110,6 +142,9 @@ case "$1" in
 		stop $2
 		start $2
 	;;
+	restart_dead)
+		restart_dead
+	;;
 
 	-V)
 		echo $VERSION_STR
@@ -119,7 +154,7 @@ case "$1" in
 	;;
 	*)
 		echo "Usage: flint {start|stop|restart} projectname"
-		echo "       flint {start_all|stop_all|restart_all}"
+		echo "       flint {start_all|stop_all|restart_all|restart_dead}"
 		echo "       flint {--version|-V}"
 		exit 1
 	;;

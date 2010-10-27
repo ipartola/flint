@@ -1,3 +1,10 @@
+flint (1.1.0-1) stable; urgency=low
+
+  * Using su instead of sudo
+  * Added a restart_dead method to be used for process monitoring
+
+ -- Igor Partola <igor@igorpartola.com>  Wed, 26 Oct 2010 07:53:00 -0400
+
 flint (1.0.1-1) stable; urgency=low
 
   * Switched to prefork by default
