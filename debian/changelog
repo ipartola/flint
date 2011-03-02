@@ -1,3 +1,10 @@
+flint (1.1.2) stable; urgency=low
+
+  * Simplifying how python gets invoked
+  * Adding the option for setting the method (threaded vs prefork)
+
+ -- Igor Partola <igor@igorpartola.com>  Wed, 02 Mar 2011 07:04:00 -0500
+
 flint (1.1.1) stable; urgency=low
 
   * Adding options for maxchildren and maxrequests

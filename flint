@@ -6,6 +6,7 @@ MINSPARE=4
 MAXSPARE=32
 MAXCHILDREN=32
 MAXREQUESTS=100
+METHOD=prefork
 RUN_DIR="/var/run/django"
 FASTCGI_USER="www-data"
 
@@ -55,7 +56,7 @@ start() {
 		return
 	fi
 
-	echo "source \"$virtualenv/bin/activate\" && python \"$project/manage.py\" runfcgi socket=$socket pidfile=$pid minspare=$MINSPARE maxspare=$MAXSPARE maxchildren=$MAXCHILDREN maxrequests=$MAXREQUESTS method=prefork daemonize=true && echo \"OK\" || echo \"Failed\" && deactivate" | su $FASTCGI_USER -c 'bash -s'
+	su $FASTCGI_USER -c "$virtualenv/bin/python $project/manage.py runfcgi socket=$socket pidfile=$pid minspare=$MINSPARE maxspare=$MAXSPARE maxchildren=$MAXCHILDREN maxrequests=$MAXREQUESTS method=$METHOD daemonize=true" && echo OK || echo Failed
 }
 
 stop() {
