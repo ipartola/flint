@@ -12,7 +12,7 @@ FASTCGI_USER="www-data"
 
 [ -e /etc/flint.conf ] && . /etc/flint.conf;
 
-VERSION_STR="flint 1.1.0"
+VERSION_STR="flint 1.1.2"
 
 is_root_or_die() {
 	if [ $(id -u) != "0" ]; then
