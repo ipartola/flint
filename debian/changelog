@@ -1,3 +1,12 @@
+flint (1.1.3) stable; urgency=low
+
+  * Added the status_all command
+  * Better handling of determining which processes are running
+  * Properly returning status codes
+  * Added the DIETIME variable for restarting
+
+ -- Igor Partola <igor@igorpartola.com>  Wed, 04 Apr 2011 08:13:00 -0500
+
 flint (1.1.2) stable; urgency=low
 
   * Simplifying how python gets invoked
