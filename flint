@@ -123,6 +123,15 @@ stop() {
 	if is_running "$pidfile" "$project" "$virtualenv"; then
 		kill `cat $pidfile`
 		status=$?
+        if [ $status -eq 0 ]; then
+            if [ ! -z "$DIETIME" ]; then
+                sleep $DIETIME
+                if is_running "$pidfile" "$project" "$virtualenv"; then
+                    kill -9 `cat $pidfile`
+                fi
+            fi
+        fi
+
 		rm $pidfile
 		rm $socket
 
