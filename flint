@@ -10,10 +10,21 @@ DIETIME=3
 METHOD=prefork
 RUN_DIR="/var/run/django"
 FASTCGI_USER="www-data"
+FLINT_LOCK="/var/tmp/flint.lock"
 
 [ -e /etc/flint.conf ] && . /etc/flint.conf;
 
-VERSION_STR="flint 1.1.3"
+VERSION_STR="flint 1.1.4"
+
+get_lock() {
+	(set -C; : > $FLINT_LOCK) 2> /dev/null
+	if [ $? != "0" ]; then
+		echo "Lock File exists - exiting"
+		exit 1
+	fi
+
+	trap 'rm $FLINT_LOCK' EXIT
+}
 
 is_root_or_die() {
 	if [ $(id -u) != "0" ]; then
@@ -91,8 +102,10 @@ start() {
 		return 0
 	fi
 
-	su $FASTCGI_USER -c "$virtualenv/bin/python $project/manage.py runfcgi socket=$socket pidfile=$pidfile minspare=$MINSPARE maxspare=$MAXSPARE maxchildren=$MAXCHILDREN maxrequests=$MAXREQUESTS method=$METHOD daemonize=true" && echo OK || echo Failed
-	return $?
+	su $FASTCGI_USER -c "$virtualenv/bin/python $project/manage.py runfcgi socket=$socket pidfile=$pidfile minspare=$MINSPARE maxspare=$MAXSPARE maxchildren=$MAXCHILDREN maxrequests=$MAXREQUESTS method=$METHOD daemonize=true"
+	status=$?
+	[ $status -eq 0 ] && echo OK || echo Failed
+	return $status
 }
 
 stop() {
@@ -187,14 +200,17 @@ status_all() {
 errcode=0
 case "$1" in
 	start_all)
+		get_lock
 		start_all
 		errcode=$?
 	;;
 	stop_all)
+		get_lock
 		stop_all
 		errcode=$?
 	;;
 	restart_all)
+		get_lock
 		stop_all
 		errcode=$?
 		[ ! -z "$DIETIME" ] && sleep $DIETIME
@@ -203,14 +219,17 @@ case "$1" in
 	;;
 
 	start)
+		get_lock
 		start $2
 		errcode=$?
 	;;
 	stop)
+		get_lock
 		stop $2
 		errcode=$?
 	;;
 	restart)
+		get_lock
 		stop $2
 		errcode=$?
 		[ ! -z "$DIETIME" ] && sleep $DIETIME
@@ -218,10 +237,12 @@ case "$1" in
 		[ $errcode -eq 0 ] && errcode=$?
 	;;
 	restart_dead)
+		get_lock
 		restart_dead
 		errcode=$?
 	;;
 	status_all)
+		get_lock
 		status_all
 		errcode=$?
 	;;
