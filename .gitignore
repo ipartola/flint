@@ -1,0 +1,8 @@
+debian/files
+debian/flint.debhelper.log
+debian/flint.postinst.debhelper
+debian/flint.postrm.debhelper
+debian/flint.prerm.debhelper
+debian/flint.substvars
+debian/flint/
+

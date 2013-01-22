@@ -1,11 +1,11 @@
-flint (1.1.4) stable; urgency=low
+flint (1.1.4) lucid; urgency=low
 
   * Killing FastCGI processes with SIGKILL if they do not respond to SIGTERM
   * Added a flint lock file to prevent concurrency issues
 
  -- Igor Partola <igor@igorpartola.com>  Mon, 23 May 2011 08:26:00 -0500
 
-flint (1.1.3) stable; urgency=low
+flint (1.1.3) lucid; urgency=low
 
   * Added the status_all command
   * Better handling of determining which processes are running
@@ -14,34 +14,34 @@ flint (1.1.3) stable; urgency=low
 
  -- Igor Partola <igor@igorpartola.com>  Wed, 04 Apr 2011 08:13:00 -0500
 
-flint (1.1.2) stable; urgency=low
+flint (1.1.2) lucid; urgency=low
 
   * Simplifying how python gets invoked
   * Adding the option for setting the method (threaded vs prefork)
 
  -- Igor Partola <igor@igorpartola.com>  Wed, 02 Mar 2011 07:04:00 -0500
 
-flint (1.1.1) stable; urgency=low
+flint (1.1.1) lucid; urgency=low
 
   * Adding options for maxchildren and maxrequests
 
  -- Igor Partola <igor@igorpartola.com>  Tue, 01 Feb 2011 10:10:00 -0500
 
-flint (1.1.0-1) stable; urgency=low
+flint (1.1.0-1) lucid; urgency=low
 
   * Using su instead of sudo
   * Added a restart_dead method to be used for process monitoring
 
  -- Igor Partola <igor@igorpartola.com>  Wed, 26 Oct 2010 07:53:00 -0400
 
-flint (1.0.1-1) stable; urgency=low
+flint (1.0.1-1) lucid; urgency=low
 
   * Switched to prefork by default
 
- -- Igor Partola <ipartola@gmail.com>  Fri, 30 Jul 2010 17:25:00 -0400
+ -- Igor Partola <igor@igorpartola.com>  Fri, 30 Jul 2010 17:25:00 -0400
 
-flint (1.0.0-1) stable; urgency=low
+flint (1.0.0-1) lucid; urgency=low
 
   * Initial release
 
- -- Igor Partola <ipartola@gmail.com>  Fri, 11 Jun 2010 23:43:56 -0400
+ -- Igor Partola <igor@igorpartola.com>  Fri, 11 Jun 2010 23:43:56 -0400
